@@ -1,5 +1,6 @@
 backup.pem
-.terraform.tfstate
-.terraform.tfstate.backup
+*terraform.tfstate*
 .terraform/
 *.tfvars
+inventory
+.terraform*
