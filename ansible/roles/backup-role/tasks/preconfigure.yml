@@ -1,0 +1,40 @@
+---
+- name: Create backup-agent system user
+  ansible.builtin.user:
+    name: "{{ backup_user }}"
+    system: true
+    shell: /usr/sbin/nologin
+    create_home: false
+    groups: docker
+    append: true
+
+- name: Create required directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ backup_user }}"
+    group: "{{ backup_user }}"
+    mode: "0750"
+  loop:
+    - "{{ backup_staging_dir }}"
+    - "{{ backup_log_dir }}"
+    - "{{ backup_dir }}"
+
+- name: Copy backup script and config
+  ansible.builtin.copy:
+     src: "{{ item }}"
+     dest: "{{ backup_dir }}"
+     owner: root
+     group: root
+     mode: "0755"
+  loop:
+    - backup.conf
+    - ts-backup.sh
+
+- name: Ensure RCLONE_CONFIG export is in backup script
+  ansible.builtin.lineinfile:
+    path: "{{ backup_script_dest }}/ts-backup.sh"
+    insertafter: "^# ─── Configuration"
+    regexp: "^export RCLONE_CONFIG="
+    line: "export RCLONE_CONFIG={{ rclone_config_dir }}/rclone.conf"
+
