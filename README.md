@@ -26,7 +26,15 @@ terraform init
 terraform plan && terraform apply -auto-approve
 ```
 
-### 3. Run the Ansible playbook
+### 3. Configure the backup source directories
+
+Edit the following file to customize which sources are backed up:
+
+```bash
+telemetry-archive/ansible/roles/backup-role/files/backup.conf
+```
+
+### 4. Run the Ansible playbook
 
 This provisions the `tsbackup` user and configures the required permissions. An inventory file is required.
 
